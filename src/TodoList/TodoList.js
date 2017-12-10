@@ -177,11 +177,21 @@ class TodoList extends Component {
                     <span>{row.task}</span>
                   )}
                 </TableRowColumn>
-                <TableRowColumn>{new moment(row.createdDate).format('lll')}</TableRowColumn>
-                <TableRowColumn>{row.completedDate ? new moment(row.completedDate).format('lll') : ''}</TableRowColumn>
+                <TableRowColumn>
+                  {new moment(row.createdDate).format('lll')}
+                </TableRowColumn>
+                <TableRowColumn>
+                  {row.completedDate ? (
+                    new moment(row.completedDate).format('lll')
+                    ) : (
+                      ''
+                    )
+                  }
+                </TableRowColumn>
                 <TableRowColumn>
                   <Checkbox
                     checked={!!row.completedDate}
+                    label="Complete"
                     onCheck={() => this.completeTodoTask(row.id)}
                   />
                 </TableRowColumn>
