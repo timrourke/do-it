@@ -13,6 +13,7 @@ import {
   TableRowColumn,
 } from 'material-ui/Table';
 import TextField from 'material-ui/TextField';
+import './TodoList.css';
 
 /**
  * @type {String}
@@ -146,7 +147,7 @@ class TodoList extends Component {
             adjustForCheckbox={false}
           >
             <TableRow>
-              <TableHeaderColumn>Task</TableHeaderColumn>
+              <TableHeaderColumn className="TodoList__task-column">Task</TableHeaderColumn>
               <TableHeaderColumn>Created</TableHeaderColumn>
               <TableHeaderColumn>Completed</TableHeaderColumn>
               <TableHeaderColumn></TableHeaderColumn>
@@ -169,8 +170,13 @@ class TodoList extends Component {
                   -1;
               })
               .map((row) => (
-              <TableRow key={row.id} style={{color: `${!!row.completedDate ? 'grey' : ''}`}}>
-                <TableRowColumn>
+              <TableRow
+                key={row.id}
+                style={{color: `${!!row.completedDate ? 'grey' : ''}`}}
+              >
+                <TableRowColumn
+                  className="TodoList__task-column"
+                >
                   {!!row.completedDate ? (
                     <del>{row.task}</del>
                   ) : (
