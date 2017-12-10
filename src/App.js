@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import RaisedButton from 'material-ui/RaisedButton';
+import TodoList from './TodoList/TodoList';
 import './App.css';
 
 class App extends Component {
@@ -9,9 +9,9 @@ class App extends Component {
       <MuiThemeProvider>
         <div className="App">
           <header className="App-header">
-            <h1 className="App-title">Oh no another fucking todo App</h1>
+            <h1 className="App-title">do it.</h1>
           </header>
-          <RaisedButton label="Bagel me" />
+          <TodoList />
         </div>
       </MuiThemeProvider>
     );
