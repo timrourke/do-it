@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import uuid from 'uuid';
+import Checkbox from 'material-ui/Checkbox';
 import RaisedButton from 'material-ui/RaisedButton';
 import {
   Table,
@@ -40,6 +41,7 @@ class TodoList extends Component {
     };
 
     this.addNewTodoTask = this.addNewTodoTask.bind(this);
+    this.completeTodoTask = this.completeTodoTask.bind(this);
     this.deleteTodoTask = this.deleteTodoTask.bind(this);
     this.setNewTodoTask = this.setNewTodoTask.bind(this);
   }
@@ -68,6 +70,7 @@ class TodoList extends Component {
       .concat({
         id: uuid.v1(),
         task: this.state.newTodoTask,
+        completedDate: null,
         createdDate: new Date(),
       });
 
@@ -78,6 +81,32 @@ class TodoList extends Component {
     });
   }
 
+  /**
+   * Complete a todo task
+   *
+   * @param {String} todoId
+   */
+  completeTodoTask(todoId) {
+    const newTasks = this.state.tasks
+      .slice()
+      .map((todo) => {
+        if (todo.id === todoId && !todo.completedDate) {
+          todo.completedDate = new Date();
+        } else if (todo.id === todoId && !!todo.completedDate) {
+          todo.completedDate = null;
+        }
+
+        return todo;
+      });
+
+    this.setState(Object.assign(this.state, {tasks: newTasks}));
+  }
+
+  /**
+   * Delete a todo task
+   *
+   * @param {String} todoId
+   */
   deleteTodoTask(todoId) {
     const newTasks = this.state.tasks
       .slice()
@@ -85,11 +114,7 @@ class TodoList extends Component {
         return task.id !== todoId;
       });
 
-    this.setState({
-      addNewTodoTaskError: this.state.addNewTodoTask,
-      newTodoTask: this.state.newTodoTask,
-      tasks: newTasks,
-    });
+    this.setState(Object.assign(this.state, {tasks: newTasks}));
   }
 
   /**
@@ -123,6 +148,8 @@ class TodoList extends Component {
             <TableRow>
               <TableHeaderColumn>Task</TableHeaderColumn>
               <TableHeaderColumn>Created</TableHeaderColumn>
+              <TableHeaderColumn>Completed</TableHeaderColumn>
+              <TableHeaderColumn></TableHeaderColumn>
               <TableHeaderColumn></TableHeaderColumn>
             </TableRow>
           </TableHeader>
@@ -131,10 +158,33 @@ class TodoList extends Component {
             deselectOnClickaway={false}
             stripedRows={true}
           >
-            {this.state.tasks.map((row) => (
-              <TableRow key={row.id}>
-                <TableRowColumn>{row.task}</TableRowColumn>
+            {this.state.tasks
+              .sort((a, b) => {
+                if (a.completedDate === b.completedDate) {
+                  return 0;
+                }
+
+                return a.completedDate > b.completedDate ?
+                  1 :
+                  -1;
+              })
+              .map((row) => (
+              <TableRow key={row.id} style={{color: `${!!row.completedDate ? 'grey' : ''}`}}>
+                <TableRowColumn>
+                  {!!row.completedDate ? (
+                    <del>{row.task}</del>
+                  ) : (
+                    <span>{row.task}</span>
+                  )}
+                </TableRowColumn>
                 <TableRowColumn>{new moment(row.createdDate).format('lll')}</TableRowColumn>
+                <TableRowColumn>{row.completedDate ? new moment(row.completedDate).format('lll') : ''}</TableRowColumn>
+                <TableRowColumn>
+                  <Checkbox
+                    checked={!!row.completedDate}
+                    onCheck={() => this.completeTodoTask(row.id)}
+                  />
+                </TableRowColumn>
                 <TableRowColumn>
                   <RaisedButton
                     label="Delete"
