@@ -5,8 +5,18 @@ import todoApp from './reducers';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TodoListContainer from './containers/TodoListContainer';
 import './App.css';
+import { loadState, saveState } from './localStorage';
 
-const store = createStore(todoApp);
+const persistedState = loadState();
+
+const store = createStore(
+  todoApp,
+  persistedState
+);
+
+store.subscribe(() => {
+  saveState(store.getState());
+});
 
 class App extends Component {
   render() {
