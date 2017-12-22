@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import uuid from 'uuid';
 import Checkbox from 'material-ui/Checkbox';
 import RaisedButton from 'material-ui/RaisedButton';
 import {
@@ -38,7 +37,6 @@ class TodoList extends Component {
     this.state = {
       addNewTodoTaskError: '',
       newTodoTask: '',
-      tasks: []
     };
 
     this.addNewTodoTask = this.addNewTodoTask.bind(this);
@@ -60,25 +58,16 @@ class TodoList extends Component {
       this.setState({
         addNewTodoTaskError: ERROR_FIELD_REQUIRED,
         newTodoTask: '',
-        tasks: this.state.tasks,
       });
 
       return;
     }
 
-    const newTasks = this.state.tasks
-      .slice()
-      .concat({
-        id: uuid.v1(),
-        task: this.state.newTodoTask,
-        completedDate: null,
-        createdDate: new Date(),
-      });
+    this.props.addNewTodoTask(this.state.newTodoTask);
 
     this.setState({
       addNewTodoTaskError: '',
       newTodoTask: '',
-      tasks: newTasks,
     });
   }
 
@@ -88,19 +77,7 @@ class TodoList extends Component {
    * @param {String} todoId
    */
   completeTodoTask(todoId) {
-    const newTasks = this.state.tasks
-      .slice()
-      .map((todo) => {
-        if (todo.id === todoId && !todo.completedDate) {
-          todo.completedDate = new Date();
-        } else if (todo.id === todoId && !!todo.completedDate) {
-          todo.completedDate = null;
-        }
-
-        return todo;
-      });
-
-    this.setState(Object.assign(this.state, {tasks: newTasks}));
+    this.props.completeTodoTask(todoId);
   }
 
   /**
@@ -109,13 +86,7 @@ class TodoList extends Component {
    * @param {String} todoId
    */
   deleteTodoTask(todoId) {
-    const newTasks = this.state.tasks
-      .slice()
-      .filter((task) => {
-        return task.id !== todoId;
-      });
-
-    this.setState(Object.assign(this.state, {tasks: newTasks}));
+    this.props.deleteTodoTask(todoId);
   }
 
   /**
@@ -129,7 +100,6 @@ class TodoList extends Component {
         '' :
         this.state.addNewTodoTaskError,
       newTodoTask: event.target.value,
-      tasks: this.state.tasks,
     });
   }
 
@@ -159,7 +129,7 @@ class TodoList extends Component {
             deselectOnClickaway={false}
             stripedRows={true}
           >
-            {this.state.tasks
+            {this.props.todos
               .sort((a, b) => {
                 if (a.completedDate === b.completedDate) {
                   return 0;
