@@ -1,3 +1,8 @@
+/**
+ * Load persisted state from local storage
+ *
+ * @return {Object|undefined}
+ */
 export const loadState = () => {
   try {
     const state = localStorage.getItem('state');
@@ -14,6 +19,9 @@ export const loadState = () => {
   }
 }
 
+/**
+ * Save state to local storage
+ */
 export const saveState = (state) => {
   try {
     const serializedState = JSON.stringify(state);

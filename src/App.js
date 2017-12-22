@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import todoApp from './reducers';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TodoListContainer from './containers/TodoListContainer';
-import './App.css';
 import { loadState, saveState } from './localStorage';
+import todoApp from './reducers';
+import './App.css';
 
+// Attempt to load persisted state from local storage
 const persistedState = loadState();
 
 const store = createStore(
@@ -14,9 +15,8 @@ const store = createStore(
   persistedState
 );
 
-store.subscribe(() => {
-  saveState(store.getState());
-});
+// Persist the state on window.onunload
+window.onunload = () => saveState(store.getState());
 
 class App extends Component {
   render() {
